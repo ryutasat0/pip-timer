@@ -65,6 +65,10 @@ function resetTimer() {
 
 async function togglePiP() {
     try {
+        // まずはキャンバスに描画内容を反映させる
+        updateTimerDisplay();
+        
+        // その後、PiPモードに入る
         if (document.pictureInPictureElement) {
             await document.exitPictureInPicture();
         } else {
