@@ -13,10 +13,6 @@ let isRunning = false;
 let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
 
-// canvasのサイズを調整
-canvas.width = 640;  // PiPモードでも高解像度に対応
-canvas.height = 360;
-
 // video設定
 let video = document.getElementById('video');
 let videoStream = canvas.captureStream(30);  // 30FPSでのキャプチャ
@@ -30,8 +26,11 @@ function updateTimerDisplay() {
 
     // canvasに描画
     context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = '#FFF';  // 背景を白に塗りつぶす
+    context.fillRect(0, 0, canvas.width, canvas.height);  // 全体を背景色で塗りつぶす
+
     context.font = '96px Arial';  // フォントサイズを大きくして、画質を向上
-    context.fillStyle = '#000';
+    context.fillStyle = '#000';  // フォントカラーは黒
     context.fillText(timeString, 120, 200);  // 中央に描画するために位置を調整
 }
 
