@@ -1,14 +1,17 @@
 const startButton = document.getElementById('start');
 const resetButton = document.getElementById('reset');
 const pipButton = document.getElementById('pip');
-const timerDisplay = document.getElementById('timer'); 
+const timerDisplay = document.getElementById('timer');
 const minutesInput = document.getElementById('minutes');
 const secondsInput = document.getElementById('seconds');
 
 let timerInterval;
 let totalTimeInSeconds = 0;
 let isRunning = false;
-let canvas, context, videoStream, video;
+let canvas = document.createElement('canvas');
+let context = canvas.getContext('2d');
+let videoStream = canvas.captureStream();
+let video = document.createElement('video');
 
 function updateTimerDisplay() {
     const minutes = Math.floor(totalTimeInSeconds / 60);
@@ -16,7 +19,14 @@ function updateTimerDisplay() {
     timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     
     if (context) {
+        // Canvasのサイズを設定
+        canvas.width = 200; // 必要に応じて調整
+        canvas.height = 100; // 必要に応じて調整
+
+        // 背景をクリア
         context.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // テキストを描画
         context.font = '48px Arial';
         context.fillStyle = '#000';
         context.fillText(timerDisplay.textContent, 10, 50);
@@ -25,24 +35,17 @@ function updateTimerDisplay() {
 
 function startTimer() {
     if (isRunning) return;
-
-    const minutes = parseInt(minutesInput.value) || 0;
-    const seconds = parseInt(secondsInput.value) || 0;
-    totalTimeInSeconds = minutes * 60 + seconds;
-
-    if (totalTimeInSeconds > 0) {
-        isRunning = true;
-        timerInterval = setInterval(() => {
-            totalTimeInSeconds--;
-            updateTimerDisplay();
-
-            if (totalTimeInSeconds <= 0) {
-                clearInterval(timerInterval);
-                isRunning = false;
-                alert('タイマー終了');
-            }
-        }, 1000);
-    }
+    isRunning = true;
+    totalTimeInSeconds = parseInt(minutesInput.value) * 60 + parseInt(secondsInput.value);
+    timerInterval = setInterval(() => {
+        totalTimeInSeconds--;
+        updateTimerDisplay();
+        if (totalTimeInSeconds <= 0) {
+            clearInterval(timerInterval);
+            isRunning = false;
+            alert('終了');
+        }
+    }, 1000);
 }
 
 function resetTimer() {
@@ -52,33 +55,24 @@ function resetTimer() {
     updateTimerDisplay();
 }
 
-function initPiP() {
-    canvas = document.createElement('canvas');
-    context = canvas.getContext('2d');
-    canvas.width = 200;
-    canvas.height = 100;
-
-    video = document.createElement('video');
-    video.srcObject = canvas.captureStream();
-    video.play();
-
-    pipButton.addEventListener('click', async () => {
+async function togglePiP() {
+    if (!document.pictureInPictureElement) {
         try {
-            if (document.pictureInPictureElement) {
-                await document.exitPictureInPicture();
-            } else if (video.requestPictureInPicture) {
-                await video.requestPictureInPicture();
-            } else {
-                alert('このブラウザはPiPをサポートしていません');
+            if (!video.srcObject) {
+                video.srcObject = videoStream;
+                video.play();
             }
+            await video.requestPictureInPicture();
         } catch (error) {
-            console.error('PiPの起動に失敗しました:', error);
+            console.error('Failed to enter Picture-in-Picture mode:', error);
         }
-    });
-
-    updateTimerDisplay();  // 初期表示を更新
+    } else {
+        document.exitPictureInPicture();
+    }
 }
 
 startButton.addEventListener('click', startTimer);
 resetButton.addEventListener('click', resetTimer);
-document.addEventListener('DOMContentLoaded', initPiP);
+pipButton.addEventListener('click', togglePiP);
+
+updateTimerDisplay(); // 初期表示を更新
