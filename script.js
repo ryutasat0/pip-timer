@@ -8,48 +8,36 @@ const secondsInput = document.getElementById('seconds');
 let timerInterval;
 let totalTimeInSeconds = 0;
 let isRunning = false;
-
-// Canvas設定
-let canvas = document.createElement('canvas');
-canvas.width = 200;
-canvas.height = 100;
-let context = canvas.getContext('2d');
-
-// Video設定
-let videoStream = canvas.captureStream();
-let video = document.createElement('video');
-video.srcObject = videoStream;
-video.play();
+let canvas, context, videoStream, video;
 
 function updateTimerDisplay() {
     const minutes = Math.floor(totalTimeInSeconds / 60);
     const seconds = totalTimeInSeconds % 60;
-    const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    
-    // タイマー表示を更新
-    timerDisplay.textContent = timeString;
-    
-    // Canvasにタイマーを描画
+    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
     if (context) {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.font = '48px Arial';
         context.fillStyle = '#000';
-        context.fillText(timeString, 10, 50);
+        context.fillText(timerDisplay.textContent, 10, 50);
     }
 }
 
 function startTimer() {
     if (isRunning) return;
     isRunning = true;
+
     totalTimeInSeconds = parseInt(minutesInput.value) * 60 + parseInt(secondsInput.value);
-    updateTimerDisplay(); // 初期表示を更新
+    updateTimerDisplay();
+
     timerInterval = setInterval(() => {
         totalTimeInSeconds--;
         updateTimerDisplay();
+
         if (totalTimeInSeconds <= 0) {
             clearInterval(timerInterval);
             isRunning = false;
-            alert('終了');
+            alert("タイマーが終了しました！");
         }
     }, 1000);
 }
@@ -61,15 +49,29 @@ function resetTimer() {
     updateTimerDisplay();
 }
 
-async function togglePiP() {
-    if (!document.pictureInPictureElement) {
-        try {
-            await video.requestPictureInPicture();
-        } catch (error) {
-            console.error('PiPモードへの切り替えに失敗しました:', error);
-        }
-    } else {
+function togglePiP() {
+    if (!video) {
+        video = document.createElement('video');
+        video.style.display = 'none';
+        document.body.appendChild(video);
+
+        canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = 100;
+        context = canvas.getContext('2d');
+
+        videoStream = canvas.captureStream();
+        video.srcObject = videoStream;
+    }
+
+    if (document.pictureInPictureElement) {
         document.exitPictureInPicture();
+    } else {
+        video.play().then(() => {
+            video.requestPictureInPicture().catch(error => {
+                console.error('PiPの開始に失敗しました:', error);
+            });
+        });
     }
 }
 
@@ -77,4 +79,4 @@ startButton.addEventListener('click', startTimer);
 resetButton.addEventListener('click', resetTimer);
 pipButton.addEventListener('click', togglePiP);
 
-updateTimerDisplay(); // 初期表示を更新
+updateTimerDisplay();
