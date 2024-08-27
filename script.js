@@ -12,6 +12,11 @@ let isRunning = false;
 let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
 let video = document.getElementById('video');
+
+// 解像度を調整
+canvas.width = 640; // 横幅を640pxに設定
+canvas.height = 360; // 高さを360pxに設定
+
 let videoStream = canvas.captureStream();
 
 function updateTimerDisplay() {
@@ -20,10 +25,11 @@ function updateTimerDisplay() {
     timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
     if (context) {
+        // 高解像度で描画
         context.clearRect(0, 0, canvas.width, canvas.height);
-        context.font = '48px Arial';
+        context.font = '96px Arial'; // 大きめのフォントサイズで描画
         context.fillStyle = '#000';
-        context.fillText(timerDisplay.textContent, 10, 50);
+        context.fillText(timerDisplay.textContent, canvas.width / 4, canvas.height / 2);
     }
 }
 
