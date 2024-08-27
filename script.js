@@ -1,7 +1,7 @@
 const startButton = document.getElementById('start');
 const resetButton = document.getElementById('reset');
 const pipButton = document.getElementById('pip');
-const timerDisplay = document.getElementById('time');  // IDが 'time' であることを確認
+const timerDisplay = document.getElementById('time'); // IDが 'time' であることを確認
 const minutesInput = document.getElementById('minutes');
 const secondsInput = document.getElementById('seconds');
 
@@ -11,22 +11,20 @@ let isRunning = false;
 let canvas, context, videoStream, video;
 
 function updateTimerDisplay() {
-    if (timerDisplay) {  // timerDisplay が null でないかチェック
-        const minutes = Math.floor(totalTimeInSeconds / 60);
-        const seconds = totalTimeInSeconds % 60;
-        timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        
-        if (context) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.fillStyle = 'white';  // 背景を白に塗りつぶす
-            context.fillRect(0, 0, canvas.width, canvas.height); // 全体を塗りつぶす
-
-            context.font = '48px Arial';
-            context.fillStyle = '#000';  // テキストの色を黒にする
-            context.fillText(timerDisplay.textContent, 10, 50);
-        }
-    } else {
-        console.error('Timer display element not found');
+    const minutes = Math.floor(totalTimeInSeconds / 60);
+    const seconds = totalTimeInSeconds % 60;
+    const timeText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    timerDisplay.textContent = timeText;
+    
+    if (context) {
+        context.clearRect(0, 0, canvas.width, canvas.height);  // キャンバスをクリア
+        context.fillStyle = 'white';  // 背景を白に塗りつぶす
+        context.fillRect(0, 0, canvas.width, canvas.height);  // キャンバス全体を塗りつぶす
+        context.font = '48px Arial';
+        context.fillStyle = 'black';  // テキストの色を黒に設定
+        context.textAlign = 'center';  // テキストの中央揃え
+        context.textBaseline = 'middle';  // テキストのベースラインを中央に設定
+        context.fillText(timeText, canvas.width / 2, canvas.height / 2);  // テキストをキャンバスの中央に描画
     }
 }
 
