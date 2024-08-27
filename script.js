@@ -8,42 +8,39 @@ const secondsInput = document.getElementById('seconds');
 let timerInterval;
 let totalTimeInSeconds = 0;
 let isRunning = false;
-let canvas = document.getElementById('canvas');
-let context = canvas.getContext('2d');
-let video = document.getElementById('video');
-let videoStream = canvas.captureStream();
-
-video.srcObject = videoStream;
+let canvas, context, videoStream, video;
 
 function updateTimerDisplay() {
     const minutes = Math.floor(totalTimeInSeconds / 60);
     const seconds = totalTimeInSeconds % 60;
     timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.font = "96px Arial";
-    context.fillStyle = "#000";
-    context.fillText(timerDisplay.textContent, 10, 150);
+    if (context) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.font = '48px Arial';
+        context.fillStyle = '#000';
+        context.fillText(timerDisplay.textContent, 10, 50); // Ensure the text is visible in the canvas
+    }
 }
 
 function startTimer() {
     if (isRunning) return;
 
-    const minutes = parseInt(minutesInput.value) || 0;
-    const seconds = parseInt(secondsInput.value) || 0;
-    totalTimeInSeconds = minutes * 60 + seconds;
-
-    if (totalTimeInSeconds <= 0) return;
+    totalTimeInSeconds = parseInt(minutesInput.value) * 60 + parseInt(secondsInput.value);
+    if (isNaN(totalTimeInSeconds) || totalTimeInSeconds <= 0) {
+        alert("Please enter a valid time.");
+        return;
+    }
 
     isRunning = true;
     timerInterval = setInterval(() => {
-        totalTimeInSeconds--;
-        updateTimerDisplay();
-
-        if (totalTimeInSeconds <= 0) {
+        if (totalTimeInSeconds > 0) {
+            totalTimeInSeconds--;
+            updateTimerDisplay();
+        } else {
             clearInterval(timerInterval);
-            alert("タイマー終了");
             isRunning = false;
+            alert("タイマー終了");
         }
     }, 1000);
 }
@@ -55,14 +52,15 @@ function resetTimer() {
     updateTimerDisplay();
 }
 
-async function togglePiP() {
+function togglePiP() {
     if (!document.pictureInPictureElement) {
-        try {
-            await video.play();
-            await video.requestPictureInPicture();
-        } catch (error) {
-            console.error("PiPモードへの切り替えに失敗しました:", error);
-        }
+        video.play().then(() => {
+            video.requestPictureInPicture().catch(error => {
+                console.error("PiP failed: ", error);
+            });
+        }).catch(error => {
+            console.error("Video play failed: ", error);
+        });
     } else {
         document.exitPictureInPicture();
     }
@@ -72,4 +70,12 @@ startButton.addEventListener('click', startTimer);
 resetButton.addEventListener('click', resetTimer);
 pipButton.addEventListener('click', togglePiP);
 
-updateTimerDisplay();
+// Initialize canvas and video for PiP
+window.onload = () => {
+    canvas = document.getElementById('canvas');
+    context = canvas.getContext('2d');
+    video = document.getElementById('video');
+    
+    videoStream = canvas.captureStream();
+    video.srcObject = videoStream;
+};
