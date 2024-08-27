@@ -1,7 +1,7 @@
 const startButton = document.getElementById('start');
 const resetButton = document.getElementById('reset');
 const pipButton = document.getElementById('pip');
-const timerDisplay = document.getElementById('timer');
+const timerDisplay = document.getElementById('time');
 const minutesInput = document.getElementById('minutes');
 const secondsInput = document.getElementById('seconds');
 
