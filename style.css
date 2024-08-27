@@ -1,6 +1,6 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f0f0; /* 背景色をライトグレーに */
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,42 +8,45 @@ body {
     margin: 0;
 }
 
-#timer-container {
+.timer-container {
     background-color: #ffffff;
-    border: 2px solid #ccc;
+    border-radius: 8px;
     padding: 20px;
-    border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-input[type="number"] {
-    font-size: 1.5em;
-    padding: 5px;
+.timer-container input {
     width: 60px;
-    margin: 10px;
-    text-align: center;
+    padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 4px;
+    text-align: center;
 }
 
-button {
-    font-size: 1.2em;
+.timer-container button {
     padding: 10px 20px;
-    margin: 10px;
-    background-color: #4CAF50;
-    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
+    background-color: #28a745;
+    color: white;
+    font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-button:hover {
-    background-color: #45a049;
+.timer-container button:hover {
+    background-color: #218838;
 }
 
 #countdown-display {
-    font-size: 3em;
-    margin-top: 20px;
+    font-size: 48px;
     font-weight: bold;
+    color: #333;
+}
+
+#pipVideo {
+    display: none;
 }
