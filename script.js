@@ -15,9 +15,8 @@ let context = canvas.getContext('2d');
 
 // video設定
 let video = document.getElementById('video');
-let videoStream = canvas.captureStream(30);  // 30FPSでのキャプチャ
+let videoStream = canvas.captureStream(60);  // 60FPSでのキャプチャ
 
-// 初期表示の描画
 function updateTimerDisplay() {
     const minutes = Math.floor(totalTimeInSeconds / 60);
     const seconds = totalTimeInSeconds % 60;
@@ -26,12 +25,12 @@ function updateTimerDisplay() {
 
     // canvasに描画
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = '#FFF';  // 背景を白に塗りつぶす
-    context.fillRect(0, 0, canvas.width, canvas.height);  // 全体を背景色で塗りつぶす
+    context.fillStyle = '#FFF';  // 背景を白に設定
+    context.fillRect(0, 0, canvas.width, canvas.height);  // 背景色で塗りつぶし
 
-    context.font = '96px Arial';  // フォントサイズを大きくして、画質を向上
-    context.fillStyle = '#000';  // フォントカラーは黒
-    context.fillText(timeString, 120, 200);  // 中央に描画するために位置を調整
+    context.font = '48px Arial';  // フォントサイズを設定
+    context.fillStyle = '#000';  // テキスト色を黒に設定
+    context.fillText(timeString, 50, 50);  // キャンバスにテキストを描画
 }
 
 function startTimer() {
@@ -41,7 +40,7 @@ function startTimer() {
     if (isNaN(totalTimeInSeconds) || totalTimeInSeconds <= 0) return;
 
     isRunning = true;
-    updateTimerDisplay(); // タイマーをスタートするときに一度表示を更新
+    updateTimerDisplay();
 
     timerInterval = setInterval(() => {
         if (totalTimeInSeconds > 0) {
@@ -64,10 +63,8 @@ function resetTimer() {
 
 async function togglePiP() {
     try {
-        // まずはキャンバスに描画内容を反映させる
-        updateTimerDisplay();
-        
-        // その後、PiPモードに入る
+        updateTimerDisplay();  // PiP開始前にキャンバスを更新
+
         if (document.pictureInPictureElement) {
             await document.exitPictureInPicture();
         } else {
@@ -84,5 +81,5 @@ startButton.addEventListener('click', startTimer);
 resetButton.addEventListener('click', resetTimer);
 pipButton.addEventListener('click', togglePiP);
 
-// ページがロードされたときに初期描画を行う
+// 初期表示を更新
 window.onload = updateTimerDisplay;
