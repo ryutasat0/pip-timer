@@ -13,26 +13,26 @@ let isRunning = false;
 let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
 
-// video設定
-let video = document.getElementById('video');
-let videoStream = canvas.captureStream();
-
 // canvasのサイズを調整
-canvas.width = 640; // 以前の設定に戻すため、適切なサイズに調整
+canvas.width = 640;  // PiPモードでも高解像度に対応
 canvas.height = 360;
 
+// video設定
+let video = document.getElementById('video');
+let videoStream = canvas.captureStream(30);  // 30FPSでのキャプチャ
+
+// 初期表示の描画
 function updateTimerDisplay() {
     const minutes = Math.floor(totalTimeInSeconds / 60);
     const seconds = totalTimeInSeconds % 60;
-    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    timerDisplay.textContent = timeString;
 
     // canvasに描画
-    if (context) {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.font = '96px Arial'; // 大きめのフォントサイズ
-        context.fillStyle = '#000';
-        context.fillText(timerDisplay.textContent, 50, 100); // 描画位置を適切に調整
-    }
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.font = '96px Arial';  // フォントサイズを大きくして、画質を向上
+    context.fillStyle = '#000';
+    context.fillText(timeString, 120, 200);  // 中央に描画するために位置を調整
 }
 
 function startTimer() {
@@ -80,3 +80,6 @@ async function togglePiP() {
 startButton.addEventListener('click', startTimer);
 resetButton.addEventListener('click', resetTimer);
 pipButton.addEventListener('click', togglePiP);
+
+// ページがロードされたときに初期描画を行う
+window.onload = updateTimerDisplay;
