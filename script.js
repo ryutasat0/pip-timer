@@ -8,28 +8,33 @@ const secondsInput = document.getElementById('seconds');
 let timerInterval;
 let totalTimeInSeconds = 0;
 let isRunning = false;
+
+// Canvas設定
 let canvas = document.createElement('canvas');
+canvas.width = 200;
+canvas.height = 100;
 let context = canvas.getContext('2d');
+
+// Video設定
 let videoStream = canvas.captureStream();
 let video = document.createElement('video');
+video.srcObject = videoStream;
+video.play();
 
 function updateTimerDisplay() {
     const minutes = Math.floor(totalTimeInSeconds / 60);
     const seconds = totalTimeInSeconds % 60;
-    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     
+    // タイマー表示を更新
+    timerDisplay.textContent = timeString;
+    
+    // Canvasにタイマーを描画
     if (context) {
-        // Canvasのサイズを設定
-        canvas.width = 200; // 必要に応じて調整
-        canvas.height = 100; // 必要に応じて調整
-
-        // 背景をクリア
         context.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // テキストを描画
         context.font = '48px Arial';
         context.fillStyle = '#000';
-        context.fillText(timerDisplay.textContent, 10, 50);
+        context.fillText(timeString, 10, 50);
     }
 }
 
@@ -37,6 +42,7 @@ function startTimer() {
     if (isRunning) return;
     isRunning = true;
     totalTimeInSeconds = parseInt(minutesInput.value) * 60 + parseInt(secondsInput.value);
+    updateTimerDisplay(); // 初期表示を更新
     timerInterval = setInterval(() => {
         totalTimeInSeconds--;
         updateTimerDisplay();
@@ -58,13 +64,9 @@ function resetTimer() {
 async function togglePiP() {
     if (!document.pictureInPictureElement) {
         try {
-            if (!video.srcObject) {
-                video.srcObject = videoStream;
-                video.play();
-            }
             await video.requestPictureInPicture();
         } catch (error) {
-            console.error('Failed to enter Picture-in-Picture mode:', error);
+            console.error('PiPモードへの切り替えに失敗しました:', error);
         }
     } else {
         document.exitPictureInPicture();
