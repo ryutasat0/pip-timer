@@ -1,4 +1,3 @@
-// 必要な要素を取得
 const startButton = document.getElementById('start');
 const resetButton = document.getElementById('reset');
 const pipButton = document.getElementById('pip');
@@ -9,27 +8,30 @@ const secondsInput = document.getElementById('seconds');
 let timerInterval;
 let totalTimeInSeconds = 0;
 let isRunning = false;
+
+// canvasとcontextの設定
 let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
+
+// video設定
 let video = document.getElementById('video');
-
-// 解像度を調整
-canvas.width = 640; // 横幅を640pxに設定
-canvas.height = 360; // 高さを360pxに設定
-
 let videoStream = canvas.captureStream();
+
+// canvasのサイズを調整
+canvas.width = 640; // 以前の設定に戻すため、適切なサイズに調整
+canvas.height = 360;
 
 function updateTimerDisplay() {
     const minutes = Math.floor(totalTimeInSeconds / 60);
     const seconds = totalTimeInSeconds % 60;
     timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
+    // canvasに描画
     if (context) {
-        // 高解像度で描画
         context.clearRect(0, 0, canvas.width, canvas.height);
-        context.font = '96px Arial'; // 大きめのフォントサイズで描画
+        context.font = '96px Arial'; // 大きめのフォントサイズ
         context.fillStyle = '#000';
-        context.fillText(timerDisplay.textContent, canvas.width / 4, canvas.height / 2);
+        context.fillText(timerDisplay.textContent, 50, 100); // 描画位置を適切に調整
     }
 }
 
@@ -40,6 +42,8 @@ function startTimer() {
     if (isNaN(totalTimeInSeconds) || totalTimeInSeconds <= 0) return;
 
     isRunning = true;
+    updateTimerDisplay(); // タイマーをスタートするときに一度表示を更新
+
     timerInterval = setInterval(() => {
         if (totalTimeInSeconds > 0) {
             totalTimeInSeconds--;
@@ -60,12 +64,16 @@ function resetTimer() {
 }
 
 async function togglePiP() {
-    if (document.pictureInPictureElement) {
-        await document.exitPictureInPicture();
-    } else {
-        video.srcObject = videoStream;
-        await video.play();
-        await video.requestPictureInPicture();
+    try {
+        if (document.pictureInPictureElement) {
+            await document.exitPictureInPicture();
+        } else {
+            video.srcObject = videoStream;
+            await video.play();
+            await video.requestPictureInPicture();
+        }
+    } catch (error) {
+        console.error('PiPモードへの切り替えに失敗しました:', error);
     }
 }
 
