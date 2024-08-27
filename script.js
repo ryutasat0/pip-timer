@@ -1,68 +1,87 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const startButton = document.getElementById('start');
-    const resetButton = document.getElementById('reset');
-    const pipButton = document.getElementById('pip');
-    const timeDisplay = document.getElementById('time');
-    const canvas = document.getElementById('canvas');
-    const video = document.getElementById('video');
-    const ctx = canvas.getContext('2d');
+const startButton = document.getElementById('start');
+const resetButton = document.getElementById('reset');
+const pipButton = document.getElementById('pip');
+const timerDisplay = document.getElementById('timer');
+const minutesInput = document.getElementById('minutes');
+const secondsInput = document.getElementById('seconds');
 
-    let interval;
-    let totalTime;
+let timerInterval;
+let totalTimeInSeconds = 0;
+let isRunning = false;
+let canvas, context, videoStream, video;
 
-    startButton.addEventListener('click', function() {
-        let minutes = parseInt(document.getElementById('minutes').value, 10);
-        let seconds = parseInt(document.getElementById('seconds').value, 10);
+function updateTimerDisplay() {
+    const minutes = Math.floor(totalTimeInSeconds / 60);
+    const seconds = totalTimeInSeconds % 60;
+    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-        // NaNの場合は0に設定
-        if (isNaN(minutes)) {
-            minutes = 0;
-        }
-        if (isNaN(seconds)) {
-            seconds = 0;
-        }
+    // PiP用のCanvasに描画
+    if (context) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.font = '48px Arial';
+        context.fillStyle = '#000';
+        context.fillText(timerDisplay.textContent, 10, 50);
+    }
+}
 
-        totalTime = (minutes * 60) + seconds;
-        startTimer(totalTime);
-    });
+function startTimer() {
+    if (isRunning) return;
 
-    resetButton.addEventListener('click', function() {
-        clearInterval(interval);
-        timeDisplay.textContent = "00:00";
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = "48px Arial";
-        ctx.fillText("00:00", 50, 50);
-    });
+    const minutes = parseInt(minutesInput.value) || 0;
+    const seconds = parseInt(secondsInput.value) || 0;
+    totalTimeInSeconds = minutes * 60 + seconds;
 
-    pipButton.addEventListener('click', function() {
-        video.srcObject = canvas.captureStream();
-        if (document.pictureInPictureElement) {
-            document.exitPictureInPicture();
+    if (totalTimeInSeconds <= 0) return;
+
+    isRunning = true;
+    timerInterval = setInterval(() => {
+        if (totalTimeInSeconds > 0) {
+            totalTimeInSeconds--;
+            updateTimerDisplay();
         } else {
-            video.requestPictureInPicture();
+            clearInterval(timerInterval);
+            isRunning = false;
+            alert('タイマー終了');
         }
-    });
+    }, 1000);
+}
 
-    function startTimer(duration) {
-        clearInterval(interval); // 既存のタイマーをリセット
-        interval = setInterval(function() {
-            let minutes = parseInt(duration / 60, 10);
-            let seconds = parseInt(duration % 60, 10);
+function resetTimer() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    totalTimeInSeconds = 0;
+    updateTimerDisplay();
+}
 
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
+function initPiP() {
+    canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 100;
+    context = canvas.getContext('2d');
 
-            timeDisplay.textContent = minutes + ":" + seconds;
+    videoStream = canvas.captureStream();
+    video = document.createElement('video');
+    video.srcObject = videoStream;
+    video.play();
+}
 
-            // Canvasに時間を描画
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.font = "48px Arial";
-            ctx.fillText(minutes + ":" + seconds, 50, 50);
-
-            if (--duration < 0) {
-                clearInterval(interval);
-                alert("タイマー終了");
-            }
-        }, 1000);
+pipButton.addEventListener('click', async () => {
+    if (!document.pictureInPictureElement) {
+        if (!video) {
+            initPiP();
+        }
+        try {
+            await video.requestPictureInPicture();
+        } catch (error) {
+            console.error('PiP failed', error);
+        }
+    } else {
+        document.exitPictureInPicture();
     }
 });
+
+startButton.addEventListener('click', startTimer);
+resetButton.addEventListener('click', resetTimer);
+
+// 初期表示を0:00に設定
+updateTimerDisplay();
