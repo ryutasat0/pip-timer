@@ -1,7 +1,7 @@
 const startButton = document.getElementById('start');
 const resetButton = document.getElementById('reset');
 const pipButton = document.getElementById('pip');
-const timerDisplay = document.getElementById('time');  // timeに変更
+const timerDisplay = document.getElementById('time');  // IDが 'time' であることを確認
 const minutesInput = document.getElementById('minutes');
 const secondsInput = document.getElementById('seconds');
 
@@ -37,19 +37,21 @@ function startTimer() {
         isRunning = false;
         startButton.textContent = 'Start';
     } else {
-        timerInterval = setInterval(() => {
-            if (totalTimeInSeconds > 0) {
-                totalTimeInSeconds--;
-                updateTimerDisplay();
-            } else {
-                clearInterval(timerInterval);
-                isRunning = false;
-                startButton.textContent = 'Start';
-                alert('タイマー終了');
-            }
-        }, 1000);
-        isRunning = true;
-        startButton.textContent = 'Stop';
+        if (totalTimeInSeconds > 0) {
+            timerInterval = setInterval(() => {
+                if (totalTimeInSeconds > 0) {
+                    totalTimeInSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                    startButton.textContent = 'Start';
+                    alert('タイマー終了');
+                }
+            }, 1000);
+            isRunning = true;
+            startButton.textContent = 'Stop';
+        }
     }
 }
 
@@ -77,15 +79,17 @@ function setupCanvasForPiP() {
 
 function togglePiP() {
     try {
-        video.play().then(() => {
-            if (document.pictureInPictureElement) {
-                document.exitPictureInPicture();
-            } else {
-                video.requestPictureInPicture();
-            }
-        });
+        if (video && !document.pictureInPictureElement) {
+            video.play().then(() => {
+                return video.requestPictureInPicture();
+            }).catch(error => {
+                console.error('Failed to enable Picture-in-Picture mode:', error);
+            });
+        } else if (document.pictureInPictureElement) {
+            document.exitPictureInPicture();
+        }
     } catch (error) {
-        console.error('Failed to toggle PiP mode:', error);
+        console.error('Error in PiP:', error);
     }
 }
 
