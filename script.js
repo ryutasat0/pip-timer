@@ -1,91 +1,60 @@
-const startButton = document.getElementById('startButton');
-const resetButton = document.getElementById('resetButton');
-const pipButton = document.getElementById('pipButton');
-const countdownDisplay = document.getElementById('countdown-display');
-const pipVideo = document.getElementById('pipVideo');
-const pipCanvas = document.getElementById('pipCanvas');
-let timer;
-let totalTime;
-let remainingTime;
-
-startButton.addEventListener('click', () => {
+document.getElementById('startButton').addEventListener('click', function() {
     const minutes = parseInt(document.getElementById('minutes').value, 10);
     const seconds = parseInt(document.getElementById('seconds').value, 10);
-    totalTime = (minutes * 60) + seconds;
-    remainingTime = totalTime;
 
-    if (timer) {
-        clearInterval(timer);
+    if (isNaN(minutes) || isNaN(seconds)) {
+        alert('Please enter valid numbers for minutes and seconds.');
+        return;
     }
 
-    timer = setInterval(() => {
-        if (remainingTime <= 0) {
-            clearInterval(timer);
-            showEndDialog();
-        } else {
-            remainingTime--;
-            updateDisplay();
-            drawOnCanvas();
+    let time = minutes * 60 + seconds;
+    const countdownDisplay = document.getElementById('countdown-display');
+
+    const countdownInterval = setInterval(() => {
+        const min = Math.floor(time / 60);
+        const sec = time % 60;
+        countdownDisplay.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        
+        if (time === 0) {
+            clearInterval(countdownInterval);
+            alert('タイマー終了');
         }
+
+        time--;
     }, 1000);
-
-    updateDisplay();
-    drawOnCanvas();
 });
 
-resetButton.addEventListener('click', () => {
-    if (timer) {
-        clearInterval(timer);
-    }
-    remainingTime = totalTime;
-    updateDisplay();
-    drawOnCanvas();
+document.getElementById('resetButton').addEventListener('click', function() {
+    document.getElementById('minutes').value = '';
+    document.getElementById('seconds').value = '';
+    document.getElementById('countdown-display').textContent = '00:00';
 });
 
-pipButton.addEventListener('click', async () => {
-    try {
-        pipVideo.srcObject = pipCanvas.captureStream();
-        pipVideo.onloadedmetadata = () => {
-            pipVideo.play();
-            pipVideo.requestPictureInPicture();
-        };
-    } catch (error) {
-        console.error('PiPモードに入れませんでした:', error);
+// PiPボタンのイベントリスナー
+document.getElementById('pipButton').addEventListener('click', function() {
+    const video = document.getElementById('pipVideo');
+    if (!document.pictureInPictureElement) {
+        video.requestPictureInPicture();
+    } else {
+        document.exitPictureInPicture();
     }
 });
 
-function updateDisplay() {
-    const minutes = Math.floor(remainingTime / 60);
-    const seconds = remainingTime % 60;
-    countdownDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
+// PiP用のキャンバスをビデオに変換する部分
+function updateCanvas() {
+    const canvas = document.getElementById('pipCanvas');
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
-function drawOnCanvas() {
-    const context = pipCanvas.getContext('2d');
-    const minutes = Math.floor(remainingTime / 60);
-    const seconds = remainingTime % 60;
-    const text = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-    pipCanvas.width = 200; // Canvasの幅を設定
-    pipCanvas.height = 100; // Canvasの高さを設定
-
-    // 背景をクリア
-    context.clearRect(0, 0, pipCanvas.width, pipCanvas.height);
-
-    // 背景色を設定
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, pipCanvas.width, pipCanvas.height);
-
-    // テキストのスタイルを設定
-    context.fillStyle = 'black';
+    // タイマーの数字をキャンバスに描画
+    const countdownDisplay = document.getElementById('countdown-display').textContent;
     context.font = '48px Arial';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
+    context.fillStyle = 'black';
+    context.fillText(countdownDisplay, 10, 50);
 
-    // テキストをCanvasに描画
-    context.fillText(text, pipCanvas.width / 2, pipCanvas.height / 2);
+    const video = document.getElementById('pipVideo');
+    video.srcObject = canvas.captureStream();
 }
 
-function showEndDialog() {
-    alert("終了");
-}
+// PiPの表示を更新するためのインターバル
+setInterval(updateCanvas, 1000);
