@@ -8,18 +8,16 @@
 </head>
 <body>
     <div class="timer-container">
-        <input id="minutes" type="number" min="0" placeholder="Minutes">
-        <input id="seconds" type="number" min="0" max="59" placeholder="Seconds">
-        <button id="startButton">Start</button>
-        <button id="resetButton">Reset</button>
-        <button id="pipButton">PiP</button>
-        <div id="countdown-display">00:00</div>
+        <input type="number" id="minutes" placeholder="Minutes">
+        <input type="number" id="seconds" placeholder="Seconds">
+        <button id="start">Start</button>
+        <button id="reset">Reset</button>
+        <button id="pip">PiP</button>
+        <div id="time">00:00</div>
     </div>
 
-    <!-- PiP用のビデオ要素 -->
-    <video id="pipVideo" hidden></video>
-    <!-- カウントダウン表示用のキャンバス -->
-    <canvas id="pipCanvas" hidden></canvas>
+    <canvas id="canvas" width="200" height="100" style="display:none;"></canvas>
+    <video id="video" style="display:none;" autoplay muted></video>
 
     <script src="script.js"></script>
 </body>

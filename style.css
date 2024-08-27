@@ -1,52 +1,45 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    background-color: #f0f0f0;
 }
 
 .timer-container {
     background-color: #ffffff;
-    border-radius: 8px;
     padding: 20px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.timer-container input {
-    width: 60px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
+.timer-container input {
+    font-size: 18px;
+    padding: 5px;
+    width: 70px;
+    margin-right: 10px;
+}
+
 .timer-container button {
+    font-size: 18px;
     padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #28a745;
+    margin-right: 10px;
+    background-color: #4CAF50;
     color: white;
-    font-size: 16px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .timer-container button:hover {
-    background-color: #218838;
+    background-color: #45a049;
 }
 
-#countdown-display {
+#time {
     font-size: 48px;
     font-weight: bold;
-    color: #333;
-}
-
-#pipVideo {
-    display: none;
+    margin-top: 20px;
 }

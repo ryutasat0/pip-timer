@@ -1,60 +1,68 @@
-document.getElementById('startButton').addEventListener('click', function() {
-    const minutes = parseInt(document.getElementById('minutes').value, 10);
-    const seconds = parseInt(document.getElementById('seconds').value, 10);
+document.addEventListener('DOMContentLoaded', function() {
+    const startButton = document.getElementById('start');
+    const resetButton = document.getElementById('reset');
+    const pipButton = document.getElementById('pip');
+    const timeDisplay = document.getElementById('time');
+    const canvas = document.getElementById('canvas');
+    const video = document.getElementById('video');
+    const ctx = canvas.getContext('2d');
 
-    if (isNaN(minutes) || isNaN(seconds)) {
-        alert('Please enter valid numbers for minutes and seconds.');
-        return;
-    }
+    let interval;
+    let totalTime;
 
-    let time = minutes * 60 + seconds;
-    const countdownDisplay = document.getElementById('countdown-display');
+    startButton.addEventListener('click', function() {
+        let minutes = parseInt(document.getElementById('minutes').value, 10);
+        let seconds = parseInt(document.getElementById('seconds').value, 10);
 
-    const countdownInterval = setInterval(() => {
-        const min = Math.floor(time / 60);
-        const sec = time % 60;
-        countdownDisplay.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-        
-        if (time === 0) {
-            clearInterval(countdownInterval);
-            alert('タイマー終了');
+        // NaNの場合は0に設定
+        if (isNaN(minutes)) {
+            minutes = 0;
+        }
+        if (isNaN(seconds)) {
+            seconds = 0;
         }
 
-        time--;
-    }, 1000);
-});
+        totalTime = (minutes * 60) + seconds;
+        startTimer(totalTime);
+    });
 
-document.getElementById('resetButton').addEventListener('click', function() {
-    document.getElementById('minutes').value = '';
-    document.getElementById('seconds').value = '';
-    document.getElementById('countdown-display').textContent = '00:00';
-});
+    resetButton.addEventListener('click', function() {
+        clearInterval(interval);
+        timeDisplay.textContent = "00:00";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = "48px Arial";
+        ctx.fillText("00:00", 50, 50);
+    });
 
-// PiPボタンのイベントリスナー
-document.getElementById('pipButton').addEventListener('click', function() {
-    const video = document.getElementById('pipVideo');
-    if (!document.pictureInPictureElement) {
-        video.requestPictureInPicture();
-    } else {
-        document.exitPictureInPicture();
+    pipButton.addEventListener('click', function() {
+        video.srcObject = canvas.captureStream();
+        if (document.pictureInPictureElement) {
+            document.exitPictureInPicture();
+        } else {
+            video.requestPictureInPicture();
+        }
+    });
+
+    function startTimer(duration) {
+        clearInterval(interval); // 既存のタイマーをリセット
+        interval = setInterval(function() {
+            let minutes = parseInt(duration / 60, 10);
+            let seconds = parseInt(duration % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            timeDisplay.textContent = minutes + ":" + seconds;
+
+            // Canvasに時間を描画
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "48px Arial";
+            ctx.fillText(minutes + ":" + seconds, 50, 50);
+
+            if (--duration < 0) {
+                clearInterval(interval);
+                alert("タイマー終了");
+            }
+        }, 1000);
     }
 });
-
-// PiP用のキャンバスをビデオに変換する部分
-function updateCanvas() {
-    const canvas = document.getElementById('pipCanvas');
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
-    // タイマーの数字をキャンバスに描画
-    const countdownDisplay = document.getElementById('countdown-display').textContent;
-    context.font = '48px Arial';
-    context.fillStyle = 'black';
-    context.fillText(countdownDisplay, 10, 50);
-
-    const video = document.getElementById('pipVideo');
-    video.srcObject = canvas.captureStream();
-}
-
-// PiPの表示を更新するためのインターバル
-setInterval(updateCanvas, 1000);
