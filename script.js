@@ -20,16 +20,16 @@ function updateTimerDisplay() {
     const seconds = totalTimeInSeconds % 60;
     timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-    // キャンバスの解像度を8倍に調整
-    const scaleFactor = 8;  // 解像度を8倍に
+    // キャンバスの解像度を4倍に調整
+    const scaleFactor = 4;  // 解像度を4倍に
     canvas.width = 200 * scaleFactor;
     canvas.height = 100 * scaleFactor;
     context.setTransform(scaleFactor, 0, 0, scaleFactor, 0, 0);
 
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.font = '96px Arial';  // フォントサイズを大きくする
+    context.font = '48px Arial';
     context.fillStyle = '#000';
-    context.fillText(timerDisplay.textContent, 10, 75);  // 位置を調整
+    context.fillText(timerDisplay.textContent, 10, 50);
 }
 
 function startTimer() {
