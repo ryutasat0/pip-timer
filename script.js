@@ -18,8 +18,11 @@ function updateTimerDisplay() {
         
         if (context) {
             context.clearRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = 'white';  // 背景を白に塗りつぶす
+            context.fillRect(0, 0, canvas.width, canvas.height); // 全体を塗りつぶす
+
             context.font = '48px Arial';
-            context.fillStyle = '#000';
+            context.fillStyle = '#000';  // テキストの色を黒にする
             context.fillText(timerDisplay.textContent, 10, 50);
         }
     } else {
