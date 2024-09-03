@@ -1,5 +1,5 @@
 const startButton = document.getElementById('start');
-const stopButton = document.getElementById('stop'); // ストップボタン
+const stopButton = document.getElementById('stop');
 const resetButton = document.getElementById('reset');
 const pipButton = document.getElementById('pip');
 const timerDisplay = document.getElementById('time');
@@ -9,6 +9,7 @@ const secondsInput = document.getElementById('seconds');
 let timerInterval;
 let totalTimeInSeconds = 0;
 let isRunning = false;
+let isPaused = false;
 let canvas, context, videoStream, video;
 
 function updateTimerDisplay() {
@@ -17,16 +18,13 @@ function updateTimerDisplay() {
     timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
     if (context) {
-        // 背景を白に設定
         context.fillStyle = '#FFF';
-        context.fillRect(0, 0, canvas.width, canvas.height); // 全体に白を塗りつぶす
-
-        // テキストを黒に設定
+        context.fillRect(0, 0, canvas.width, canvas.height); 
         context.font = '48px Arial';
         context.fillStyle = '#000';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText(timerDisplay.textContent, canvas.width / 2, canvas.height / 2); // 中央にテキストを描画
+        context.fillText(timerDisplay.textContent, canvas.width / 2, canvas.height / 2); 
     }
 }
 
@@ -43,6 +41,7 @@ function startTimer() {
 
     totalTimeInSeconds = minutes * 60 + seconds;
     isRunning = true;
+    isPaused = false;
     updateTimerDisplay();
 
     timerInterval = setInterval(() => {
@@ -58,15 +57,23 @@ function startTimer() {
 }
 
 function stopTimer() {
-    clearInterval(timerInterval);
-    isRunning = false;
+    if (isRunning && !isPaused) {
+        clearInterval(timerInterval);
+        isPaused = true;
+        stopButton.textContent = "Restart";
+    } else if (isPaused) {
+        startTimer();
+        stopButton.textContent = "Stop";
+    }
 }
 
 function resetTimer() {
     clearInterval(timerInterval);
     isRunning = false;
+    isPaused = false;
     totalTimeInSeconds = 0;
     updateTimerDisplay();
+    stopButton.textContent = "Stop";
 }
 
 function togglePiP() {
@@ -96,6 +103,5 @@ window.onload = () => {
     videoStream = canvas.captureStream();
     video.srcObject = videoStream;
 
-    // 初期状態でCanvasにタイマーの初期値を表示
     updateTimerDisplay();
 };
