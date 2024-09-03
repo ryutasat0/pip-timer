@@ -16,9 +16,13 @@ function updateTimerDisplay() {
     timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
     if (context) {
-        context.clearRect(0, 0, canvas.width, canvas.height); // 画面をクリア
+        // 背景を白に設定
+        context.fillStyle = '#FFF';
+        context.fillRect(0, 0, canvas.width, canvas.height); // 全体に白を塗りつぶす
+
+        // テキストを黒に設定
         context.font = '48px Arial';
-        context.fillStyle = '#FFF'; // 色を白に変更
+        context.fillStyle = '#000';
         context.fillText(timerDisplay.textContent, 10, 50); // テキストを描画
     }
 }
