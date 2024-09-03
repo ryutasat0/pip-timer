@@ -8,27 +8,9 @@
 </head>
 <body>
     <div class="timer-container">
-        <select id="minutes">
-            <!-- 0〜59分までの選択肢を用意 -->
-            <option value="0">0分</option>
-            <!-- 必要に応じて選択肢を追加 -->
-            <option value="1">1分</option>
-            <option value="5">5分</option>
-            <option value="10">10分</option>
-            <option value="15">15分</option>
-            <!-- 中略 -->
-            <option value="59">59分</option>
-        </select>
-        <select id="seconds">
-            <!-- 0〜59秒までの選択肢を用意 -->
-            <option value="0">0秒</option>
-            <!-- 必要に応じて選択肢を追加 -->
-            <option value="10">10秒</option>
-            <option value="20">20秒</option>
-            <option value="30">30秒</option>
-            <option value="40">40秒</option>
-            <option value="50">50秒</option>
-        </select>
+        <!-- 分と秒の入力をテキストボックスに戻す -->
+        <input type="number" id="minutes" placeholder="分" min="0" max="59">
+        <input type="number" id="seconds" placeholder="秒" min="0" max="59">
         <button id="start">Start</button>
         <button id="reset">Reset</button>
         <button id="pip">PiP</button>

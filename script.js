@@ -2,8 +2,8 @@ const startButton = document.getElementById('start');
 const resetButton = document.getElementById('reset');
 const pipButton = document.getElementById('pip');
 const timerDisplay = document.getElementById('time');
-const minutesSelect = document.getElementById('minutes');
-const secondsSelect = document.getElementById('seconds');
+const minutesInput = document.getElementById('minutes');
+const secondsInput = document.getElementById('seconds');
 
 let timerInterval;
 let totalTimeInSeconds = 0;
@@ -23,18 +23,20 @@ function updateTimerDisplay() {
         // テキストを黒に設定
         context.font = '48px Arial';
         context.fillStyle = '#000';
-        context.fillText(timerDisplay.textContent, 10, 50); // テキストを描画
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(timerDisplay.textContent, canvas.width / 2, canvas.height / 2); // 中央にテキストを描画
     }
 }
 
 function startTimer() {
     if (isRunning) return;
 
-    const minutes = parseInt(minutesSelect.value);
-    const seconds = parseInt(secondsSelect.value);
+    const minutes = parseInt(minutesInput.value);
+    const seconds = parseInt(secondsInput.value);
 
-    if ((minutes === 0 && seconds === 0)) {
-        alert("Please select a valid time.");
+    if (isNaN(minutes) || isNaN(seconds) || minutes < 0 || seconds < 0 || (minutes === 0 && seconds === 0)) {
+        alert("Please enter a valid time.");
         return;
     }
 
