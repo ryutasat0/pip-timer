@@ -16,10 +16,10 @@ function updateTimerDisplay() {
     timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
     if (context) {
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height); // 画面をクリア
         context.font = '48px Arial';
-        context.fillStyle = '#000';
-        context.fillText(timerDisplay.textContent, 10, 50);
+        context.fillStyle = '#FFF'; // 色を白に変更
+        context.fillText(timerDisplay.textContent, 10, 50); // テキストを描画
     }
 }
 
@@ -82,4 +82,7 @@ window.onload = () => {
     
     videoStream = canvas.captureStream();
     video.srcObject = videoStream;
+
+    // 初期状態でCanvasにタイマーの初期値を表示
+    updateTimerDisplay();
 };
