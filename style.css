@@ -28,7 +28,7 @@ body {
 .timer-container input {
     font-size: 18px;
     padding: 10px;
-    width: 80px; /* 幅を広げて4桁まで表示可能に */
+    width: 100px; /* 幅を広げて4桁以上の入力が見えるように */
     margin-right: 10px;
     margin-bottom: 10px;
     text-align: center;
