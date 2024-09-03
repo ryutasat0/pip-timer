@@ -18,6 +18,13 @@ body {
     max-width: 100%;
 }
 
+.timer-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
 .timer-container input {
     font-size: 18px;
     padding: 10px;
