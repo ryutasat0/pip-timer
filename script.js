@@ -2,8 +2,8 @@ const startButton = document.getElementById('start');
 const resetButton = document.getElementById('reset');
 const pipButton = document.getElementById('pip');
 const timerDisplay = document.getElementById('time');
-const minutesInput = document.getElementById('minutes');
-const secondsInput = document.getElementById('seconds');
+const minutesSelect = document.getElementById('minutes');
+const secondsSelect = document.getElementById('seconds');
 
 let timerInterval;
 let totalTimeInSeconds = 0;
@@ -19,20 +19,25 @@ function updateTimerDisplay() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.font = '48px Arial';
         context.fillStyle = '#000';
-        context.fillText(timerDisplay.textContent, 10, 50); // Ensure the text is visible in the canvas
+        context.fillText(timerDisplay.textContent, 10, 50);
     }
 }
 
 function startTimer() {
     if (isRunning) return;
 
-    totalTimeInSeconds = parseInt(minutesInput.value) * 60 + parseInt(secondsInput.value);
-    if (isNaN(totalTimeInSeconds) || totalTimeInSeconds <= 0) {
-        alert("Please enter a valid time.");
+    const minutes = parseInt(minutesSelect.value);
+    const seconds = parseInt(secondsSelect.value);
+
+    if ((minutes === 0 && seconds === 0)) {
+        alert("Please select a valid time.");
         return;
     }
 
+    totalTimeInSeconds = minutes * 60 + seconds;
     isRunning = true;
+    updateTimerDisplay();
+
     timerInterval = setInterval(() => {
         if (totalTimeInSeconds > 0) {
             totalTimeInSeconds--;
@@ -70,7 +75,6 @@ startButton.addEventListener('click', startTimer);
 resetButton.addEventListener('click', resetTimer);
 pipButton.addEventListener('click', togglePiP);
 
-// Initialize canvas and video for PiP
 window.onload = () => {
     canvas = document.getElementById('canvas');
     context = canvas.getContext('2d');
