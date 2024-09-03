@@ -78,7 +78,7 @@ function stopTimer() {
         isPaused = true;
         stopButton.textContent = "Restart";
     } else if (isPaused) {
-        startTimer();  // タイマーを再開
+        startTimer();
     }
 }
 
@@ -92,16 +92,20 @@ function resetTimer() {
 }
 
 function togglePiP() {
-    if (!document.pictureInPictureElement) {
-        video.play().then(() => {
-            video.requestPictureInPicture().catch(error => {
-                console.error("PiP failed: ", error);
+    if (document.pictureInPictureEnabled) {
+        if (!document.pictureInPictureElement) {
+            video.play().then(() => {
+                video.requestPictureInPicture().catch(error => {
+                    console.error("PiP failed: ", error);
+                });
+            }).catch(error => {
+                console.error("Video play failed: ", error);
             });
-        }).catch(error => {
-            console.error("Video play failed: ", error);
-        });
+        } else {
+            document.exitPictureInPicture();
+        }
     } else {
-        document.exitPictureInPicture();
+        alert("PiP is not supported on this device.");
     }
 }
 
