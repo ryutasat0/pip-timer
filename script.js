@@ -19,17 +19,17 @@ function updateTimerDisplay() {
 
     if (context) {
         context.fillStyle = '#FFF';
-        context.fillRect(0, 0, canvas.width, canvas.height); 
+        context.fillRect(0, 0, canvas.width, canvas.height);
         context.font = '48px Arial';
         context.fillStyle = '#000';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText(timerDisplay.textContent, canvas.width / 2, canvas.height / 2); 
+        context.fillText(timerDisplay.textContent, canvas.width / 2, canvas.height / 2);
     }
 }
 
 function startTimer() {
-    if (isRunning && !isPaused) return;
+    if (isRunning) return;
 
     if (!isPaused) {
         const minutes = parseInt(minutesInput.value);
@@ -45,7 +45,7 @@ function startTimer() {
 
     isRunning = true;
     isPaused = false;
-    updateTimerDisplay();
+    stopButton.textContent = "Stop";  // タイマーが再開されたときにボタンを「Stop」に戻す
 
     timerInterval = setInterval(() => {
         if (totalTimeInSeconds > 0) {
@@ -54,20 +54,20 @@ function startTimer() {
         } else {
             clearInterval(timerInterval);
             isRunning = false;
+            stopButton.textContent = "Stop";  // タイマー終了時にボタンを「Stop」に戻す
             alert("タイマー終了");
         }
     }, 1000);
 }
 
 function stopTimer() {
-    if (isRunning && !isPaused) {
+    if (isRunning) {
         clearInterval(timerInterval);
-        isPaused = true;
-        stopButton.textContent = "Restart";  // テキストを「Restart」に変更
-    } else if (isPaused) {
         isRunning = false;
+        isPaused = true;
+        stopButton.textContent = "Restart";  // タイマーが停止されたときにボタンを「Restart」に変更
+    } else if (isPaused) {
         startTimer();  // タイマーを再開
-        stopButton.textContent = "Stop";  // テキストを「Stop」に戻す
     }
 }
 
@@ -77,7 +77,7 @@ function resetTimer() {
     isPaused = false;
     totalTimeInSeconds = 0;
     updateTimerDisplay();
-    stopButton.textContent = "Stop";  // リセット時にテキストを「Stop」に戻す
+    stopButton.textContent = "Stop";  // リセット時にボタンを「Stop」に戻す
 }
 
 function togglePiP() {
