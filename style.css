@@ -14,24 +14,32 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    max-width: 100%;
+    width: 300px;
 }
 
 .timer-container input {
     font-size: 18px;
-    padding: 5px;
-    width: 70px;
+    padding: 10px;
+    width: 60px;
     margin-right: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .timer-container button {
     font-size: 18px;
     padding: 10px 20px;
     margin-right: 10px;
+    margin-bottom: 10px;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    width: 100%;
+    max-width: 100%;
 }
 
 .timer-container button:hover {
@@ -42,4 +50,24 @@ body {
     font-size: 48px;
     font-weight: bold;
     margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+    .timer-container {
+        width: 100%;
+        padding: 15px;
+    }
+
+    #time {
+        font-size: 36px;
+    }
+
+    .timer-container input {
+        width: calc(50% - 10px);
+    }
+
+    .timer-container button {
+        width: calc(50% - 10px);
+        margin-right: 5px;
+    }
 }

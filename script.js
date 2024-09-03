@@ -1,4 +1,5 @@
 const startButton = document.getElementById('start');
+const stopButton = document.getElementById('stop'); // ストップボタン
 const resetButton = document.getElementById('reset');
 const pipButton = document.getElementById('pip');
 const timerDisplay = document.getElementById('time');
@@ -56,6 +57,11 @@ function startTimer() {
     }, 1000);
 }
 
+function stopTimer() {
+    clearInterval(timerInterval);
+    isRunning = false;
+}
+
 function resetTimer() {
     clearInterval(timerInterval);
     isRunning = false;
@@ -78,6 +84,7 @@ function togglePiP() {
 }
 
 startButton.addEventListener('click', startTimer);
+stopButton.addEventListener('click', stopTimer); 
 resetButton.addEventListener('click', resetTimer);
 pipButton.addEventListener('click', togglePiP);
 
