@@ -29,9 +29,22 @@ function updateTimerDisplay() {
 }
 
 function startTimer() {
-    if (isRunning) return;
-
-    if (!isPaused) {
+    if (isPaused) {
+        isPaused = false;
+        isRunning = true;
+        stopButton.textContent = "Stop";
+        timerInterval = setInterval(() => {
+            if (totalTimeInSeconds > 0) {
+                totalTimeInSeconds--;
+                updateTimerDisplay();
+            } else {
+                clearInterval(timerInterval);
+                isRunning = false;
+                stopButton.textContent = "Stop";
+                alert("タイマー終了");
+            }
+        }, 1000);
+    } else if (!isRunning) {
         const minutes = parseInt(minutesInput.value);
         const seconds = parseInt(secondsInput.value);
 
@@ -41,23 +54,21 @@ function startTimer() {
         }
 
         totalTimeInSeconds = minutes * 60 + seconds;
+        isRunning = true;
+        stopButton.textContent = "Stop";
+
+        timerInterval = setInterval(() => {
+            if (totalTimeInSeconds > 0) {
+                totalTimeInSeconds--;
+                updateTimerDisplay();
+            } else {
+                clearInterval(timerInterval);
+                isRunning = false;
+                stopButton.textContent = "Stop";
+                alert("タイマー終了");
+            }
+        }, 1000);
     }
-
-    isRunning = true;
-    isPaused = false;
-    stopButton.textContent = "Stop";  // タイマーが再開されたときにボタンを「Stop」に戻す
-
-    timerInterval = setInterval(() => {
-        if (totalTimeInSeconds > 0) {
-            totalTimeInSeconds--;
-            updateTimerDisplay();
-        } else {
-            clearInterval(timerInterval);
-            isRunning = false;
-            stopButton.textContent = "Stop";  // タイマー終了時にボタンを「Stop」に戻す
-            alert("タイマー終了");
-        }
-    }, 1000);
 }
 
 function stopTimer() {
@@ -65,7 +76,7 @@ function stopTimer() {
         clearInterval(timerInterval);
         isRunning = false;
         isPaused = true;
-        stopButton.textContent = "Restart";  // タイマーが停止されたときにボタンを「Restart」に変更
+        stopButton.textContent = "Restart";
     } else if (isPaused) {
         startTimer();  // タイマーを再開
     }
@@ -77,7 +88,7 @@ function resetTimer() {
     isPaused = false;
     totalTimeInSeconds = 0;
     updateTimerDisplay();
-    stopButton.textContent = "Stop";  // リセット時にボタンを「Stop」に戻す
+    stopButton.textContent = "Stop";
 }
 
 function togglePiP() {
