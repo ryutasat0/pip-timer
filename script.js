@@ -29,17 +29,20 @@ function updateTimerDisplay() {
 }
 
 function startTimer() {
-    if (isRunning) return;
+    if (isRunning && !isPaused) return;
 
-    const minutes = parseInt(minutesInput.value);
-    const seconds = parseInt(secondsInput.value);
+    if (!isPaused) {
+        const minutes = parseInt(minutesInput.value);
+        const seconds = parseInt(secondsInput.value);
 
-    if (isNaN(minutes) || isNaN(seconds) || minutes < 0 || seconds < 0 || (minutes === 0 && seconds === 0)) {
-        alert("Please enter a valid time.");
-        return;
+        if (isNaN(minutes) || isNaN(seconds) || minutes < 0 || seconds < 0 || (minutes === 0 && seconds === 0)) {
+            alert("Please enter a valid time.");
+            return;
+        }
+
+        totalTimeInSeconds = minutes * 60 + seconds;
     }
 
-    totalTimeInSeconds = minutes * 60 + seconds;
     isRunning = true;
     isPaused = false;
     updateTimerDisplay();
@@ -60,10 +63,10 @@ function stopTimer() {
     if (isRunning && !isPaused) {
         clearInterval(timerInterval);
         isPaused = true;
-        stopButton.textContent = "Restart";
+        stopButton.textContent = "Restart";  // テキストを「Restart」に変更
     } else if (isPaused) {
-        startTimer();
-        stopButton.textContent = "Stop";
+        startTimer();  // タイマーを再開
+        stopButton.textContent = "Stop";  // テキストを「Stop」に戻す
     }
 }
 
@@ -73,7 +76,7 @@ function resetTimer() {
     isPaused = false;
     totalTimeInSeconds = 0;
     updateTimerDisplay();
-    stopButton.textContent = "Stop";
+    stopButton.textContent = "Stop";  // リセット時にテキストを「Stop」に戻す
 }
 
 function togglePiP() {
@@ -91,7 +94,7 @@ function togglePiP() {
 }
 
 startButton.addEventListener('click', startTimer);
-stopButton.addEventListener('click', stopTimer); 
+stopButton.addEventListener('click', stopTimer);
 resetButton.addEventListener('click', resetTimer);
 pipButton.addEventListener('click', togglePiP);
 
