@@ -65,6 +65,7 @@ function stopTimer() {
         isPaused = true;
         stopButton.textContent = "Restart";  // テキストを「Restart」に変更
     } else if (isPaused) {
+        isRunning = false;
         startTimer();  // タイマーを再開
         stopButton.textContent = "Stop";  // テキストを「Stop」に戻す
     }
