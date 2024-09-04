@@ -8,20 +8,22 @@
 </head>
 <body>
     <div class="timer-container">
-        <h1 class="timer-title">集中作業用タイマー</h1> 
-        <p>※PiPボタンを押すとタイマーがピクチャーインピクチャーモードになるよ
-        <input type="number" id="minutes" placeholder="分" min="0" max="59">
-        <input type="number" id="seconds" placeholder="秒" min="0" max="59">
+        <input type="number" id="minutes" placeholder="Minutes">
+        <input type="number" id="seconds" placeholder="Seconds">
         <button id="start">Start</button>
-        <button id="stop">Stop</button>
         <button id="reset">Reset</button>
         <button id="pip">PiP</button>
+        <label>
+            <input type="checkbox" id="alarmToggle"> アラーム音
+        </label>
         <div id="time">00:00</div>
     </div>
 
     <canvas id="canvas" width="200" height="100" style="display:none;"></canvas>
     <video id="video" style="display:none;" autoplay muted></video>
 
+    <audio id="alarmSound" src="alarm.mp3"></audio> 
+    
     <script src="script.js"></script>
 </body>
 </html>
