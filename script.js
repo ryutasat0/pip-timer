@@ -4,8 +4,6 @@ const pipButton = document.getElementById('pip');
 const timerDisplay = document.getElementById('time');
 const minutesInput = document.getElementById('minutes');
 const secondsInput = document.getElementById('seconds');
-const alarmToggle = document.getElementById('alarmToggle');
-const alarmSound = document.getElementById('alarmSound'); // アラーム音要素の取得
 
 let timerInterval;
 let totalTimeInSeconds = 0;
@@ -21,7 +19,7 @@ function updateTimerDisplay() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.font = '48px Arial';
         context.fillStyle = '#000';
-        context.fillText(timerDisplay.textContent, 10, 50); 
+        context.fillText(timerDisplay.textContent, 10, 50); // Ensure the text is visible in the canvas
     }
 }
 
@@ -43,11 +41,6 @@ function startTimer() {
             clearInterval(timerInterval);
             isRunning = false;
             alert("タイマー終了");
-
-            // アラーム音の再生（トグルがオンの時のみ）
-            if (alarmToggle.checked) {
-                alarmSound.play();
-            }
         }
     }, 1000);
 }
@@ -77,6 +70,7 @@ startButton.addEventListener('click', startTimer);
 resetButton.addEventListener('click', resetTimer);
 pipButton.addEventListener('click', togglePiP);
 
+// Initialize canvas and video for PiP
 window.onload = () => {
     canvas = document.getElementById('canvas');
     context = canvas.getContext('2d');
@@ -85,6 +79,3 @@ window.onload = () => {
     videoStream = canvas.captureStream();
     video.srcObject = videoStream;
 };
-
-// アラーム音のロード（初回の再生時の遅延防止）
-alarmSound.load();
